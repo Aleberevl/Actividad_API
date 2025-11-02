@@ -69,39 +69,90 @@ paths:
           description: bad input parameter
 components:
   schemas:
-    InventoryItem:
-      required:
-      - id
-      - manufacturer
-      - name
-      - releaseDate
+    Schema:
+      title: Summaries
       type: object
       properties:
-        id:
+        table_name:
           type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        name:
+        description:
           type: string
-          example: Widget Adapter
-        releaseDate:
-          type: string
-          format: date-time
-          example: 2016-08-29T09:12:33.001Z
-        manufacturer:
-          $ref: "#/components/schemas/Manufacturer"
-    Manufacturer:
-      required:
-      - name
+        columns:
+          type: array
+          items:
+            $ref: "#/components/schemas/Schema_columns"
+      description: "Tabla para almacenar resúmenes generados automáticamente de objetos\
+        \ del proyecto (publicaciones, secciones, ítems o fragmentos) junto con su\
+        \ modelo, idioma y nivel de confianza."
+      x-examples:
+        Example 1:
+          table_name: summaries
+          description: "Tabla para almacenar resúmenes generados automáticamente de\
+            \ objetos del proyecto (publicaciones, secciones, ítems o fragmentos)\
+            \ junto con su modelo, idioma y nivel de confianza."
+          columns:
+          - name: id
+            type: INT
+            constraints:
+            - PRIMARY KEY
+            - AUTO_INCREMENT
+            description: Identificador único del resumen.
+          - name: object_type
+            type: "ENUM('publication', 'section', 'item', 'chunk')"
+            constraints:
+            - NOT NULL
+            description: "Tipo de objeto al que pertenece el resumen (ejemplo: publicació\
+              n, sección, ítem o fragmento de texto)."
+          - name: object_id
+            type: BIGINT
+            constraints:
+            - NOT NULL
+            description: Identificador del objeto original en su tabla correspondiente.
+          - name: model
+            type: VARCHAR(100)
+            constraints:
+            - NOT NULL
+            description: "Nombre del modelo de lenguaje utilizado para generar el\
+              \ resumen (por ejemplo, 'GPT-5', 'Watsonx.ai')."
+          - name: model_version
+            type: VARCHAR(50)
+            constraints: []
+            description: Versión específica del modelo empleado.
+          - name: lang
+            type: VARCHAR(10)
+            default: '''es'''
+            description: Código ISO del idioma en el que fue generado el resumen (por
+              defecto 'es').
+          - name: summary_text
+            type: TEXT
+            constraints: []
+            description: Contenido textual del resumen generado.
+          - name: confidence
+            type: "DECIMAL(5,2)"
+            constraints: []
+            description: "Nivel de confianza asociado al resumen, expresado entre\
+              \ 0.00 y 1.00 o en porcentaje."
+          - name: created_at
+            type: TIMESTAMP
+            default: CURRENT_TIMESTAMP
+            description: Fecha y hora de creación del resumen.
+          - name: created_by
+            type: VARCHAR(100)
+            constraints: []
+            description: "Nombre o ID del usuario, agente o sistema que generó el\
+              \ resumen."
+    Schema_columns:
       type: object
       properties:
         name:
           type: string
-          example: ACME Corporation
-        homePage:
+        type:
           type: string
-          format: url
-          example: https://www.acme-corp.com
-        phone:
+        constraints:
+          type: array
+          items:
+            type: string
+        description:
           type: string
-          example: 408-867-5309
+        default:
+          type: string

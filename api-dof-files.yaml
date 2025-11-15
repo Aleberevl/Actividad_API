@@ -122,3 +122,31 @@ paths:
                   summary:
                     type: string
                     example: "Resumen del decreto: principales incentivos fiscales para PYMES."
+  /summaries/{id}/share:
+    get:
+      summary: Obtener resumen y link oficial del DOF
+      description: |
+        Devuelve el resumen existente junto con el enlace oficial externo
+        (publications.source_url) correspondiente a la publicación original.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resumen y link oficial encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary_id:
+                    type: integer
+                  summary_text:
+                    type: string
+                  source_url:
+                    type: string
+        "404":
+          description: Resumen no encontrado
